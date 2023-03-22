@@ -16,7 +16,6 @@ public class Film {
     int rate;
     int duration;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
     LocalDate releaseDate;
 
     @Override
