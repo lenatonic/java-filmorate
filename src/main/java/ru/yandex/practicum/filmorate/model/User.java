@@ -11,12 +11,12 @@ import java.util.Objects;
 @Builder
 public class User {
 
-    int id;
-    String email;
-    String login;
-    String name;
+    private int id;
+    private String email;
+    private String login;
+    private String name;
 
-    LocalDate birthday;
+    private LocalDate birthday;
 
     @Override
     public boolean equals(Object o) {

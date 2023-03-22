@@ -10,13 +10,13 @@ import java.util.Objects;
 @Data
 @Builder
 public class Film {
-    int id;
-    String name;
-    String description;
-    int rate;
-    int duration;
+    private int id;
+   private String name;
+    private String description;
+    private int rate;
+    private int duration;
 
-    LocalDate releaseDate;
+    private LocalDate releaseDate;
 
     @Override
     public boolean equals(Object o) {

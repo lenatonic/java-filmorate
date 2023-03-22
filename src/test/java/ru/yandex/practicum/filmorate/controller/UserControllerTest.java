@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class UserControllerTest {
-    UserController userController = new UserController();
+    private UserController userController = new UserController();
 
     @Test
     public void shouldReturnUserAfterMethodAddUser() throws ValidationException {
