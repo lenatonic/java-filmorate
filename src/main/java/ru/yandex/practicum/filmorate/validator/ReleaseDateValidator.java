@@ -13,7 +13,7 @@ public class ReleaseDateValidator implements ConstraintValidator<ReleaseDate, Lo
     @Override
     public boolean isValid(LocalDate localDate, ConstraintValidatorContext context) {
         final LocalDate limitDate = LocalDate.of(1895, 12, 28);
-        return (!localDate.isBefore(limitDate));
+        return (localDate != null && !localDate.isBefore(limitDate));
     }
 }
 

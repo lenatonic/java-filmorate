@@ -39,8 +39,4 @@ public class FilmController {
         log.debug("Выводим список фильмов: ");
         return new ArrayList<>(films.values());
     }
-
-    public HashMap<Integer, Film> getFilms() {
-        return films;
-    }
 }

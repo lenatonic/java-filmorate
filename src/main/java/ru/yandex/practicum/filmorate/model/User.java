@@ -17,7 +17,6 @@ public class User {
     @Email
     private String email;
 
-    @NotNull
     @NotBlank
     private String login;
 

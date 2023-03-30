@@ -20,9 +20,9 @@ public class UserControllerTest {
                 .birthday(LocalDate.of(2010, 10, 10))
                 .build();
 
-        userController.addUser(testUser);
+        User addedUser = userController.addUser(testUser);
 
-        assertEquals(testUser.toString(), userController.getUsers().get(1).toString());
+        assertEquals(testUser.toString(), addedUser.toString());
     }
 
     @Test
@@ -34,7 +34,7 @@ public class UserControllerTest {
                 .birthday(LocalDate.of(2010, 10, 10))
                 .build();
 
-        userController.addUser(testUser);
+        User addedUser = userController.addUser(testUser);
 
         User validateUser = User.builder()
                 .id(1)
@@ -44,7 +44,7 @@ public class UserControllerTest {
                 .birthday(LocalDate.of(2010, 10, 10))
                 .build();
 
-        assertEquals(validateUser.toString(), userController.getUsers().get(1).toString());
+        assertEquals(validateUser.toString(), addedUser.toString());
     }
 
     @Test
@@ -65,9 +65,9 @@ public class UserControllerTest {
                 .login("loginUpdateUser")
                 .birthday(LocalDate.of(2010, 10, 12))
                 .build();
-        userController.updateUser(updateUser);
+        User addedUser = userController.updateUser(updateUser);
 
-        assertEquals(updateUser.toString(), userController.getUsers().get(1).toString());
+        assertEquals(updateUser.toString(), addedUser.toString());
     }
 
     @Test
@@ -89,7 +89,7 @@ public class UserControllerTest {
                 .birthday(LocalDate.of(2010, 10, 10))
                 .build();
 
-        userController.updateUser(updateUser);
+        User addedUser = userController.updateUser(updateUser);
 
         User validateUser = User.builder()
                 .id(1)
@@ -99,7 +99,7 @@ public class UserControllerTest {
                 .birthday(LocalDate.of(2010, 10, 10))
                 .build();
 
-        assertEquals(validateUser.toString(), userController.getUsers().get(1).toString());
+        assertEquals(validateUser.toString(), addedUser.toString());
     }
 
     @Test
@@ -121,9 +121,8 @@ public class UserControllerTest {
                 .birthday(LocalDate.of(2010, 10, 10))
                 .build();
 
-        userController.updateUser(updateUser);
+        User addedUser = userController.updateUser(updateUser);
 
-        assertEquals(updateUser.toString(), userController.findAllUser().toString()
-                .replace("[", "").replace("]", ""));
+        assertEquals(updateUser.toString(), addedUser.toString());
     }
 }

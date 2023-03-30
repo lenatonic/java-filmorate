@@ -48,8 +48,4 @@ public class UserController {
             user.setName(user.getLogin());
         }
     }
-
-    public HashMap<Integer, User> getUsers() {
-        return users;
-    }
 }

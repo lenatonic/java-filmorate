@@ -20,9 +20,9 @@ public class FilmControllerTest {
                 .releaseDate(LocalDate.of(2012, 12, 12))
                 .build();
 
-        filmController.addFilm(testFilm);
+        Film addedFilm = filmController.addFilm(testFilm);
 
-        assertEquals(testFilm.toString(), filmController.getFilms().get(1).toString());
+        assertEquals(testFilm.toString(), addedFilm.toString());
     }
 
     @Test
@@ -47,9 +47,9 @@ public class FilmControllerTest {
                 .releaseDate(LocalDate.of(2012, 12, 10))
                 .build();
 
-        filmController.updateFilm(testUpdateFilm);
+        Film addedFilm = filmController.updateFilm(testUpdateFilm);
 
-        assertEquals(testUpdateFilm.toString(), filmController.getFilms().get(1).toString());
+        assertEquals(testUpdateFilm.toString(), addedFilm.toString());
     }
 
     @Test
@@ -62,10 +62,9 @@ public class FilmControllerTest {
                 .releaseDate(LocalDate.of(2012, 12, 12))
                 .build();
 
-        filmController.addFilm(testFilm);
+        Film addedFilm = filmController.addFilm(testFilm);
 
-        assertEquals(testFilm.toString(), filmController.findAllFilms().toString()
-                .replace("[", "").replace("]", ""));
+        assertEquals(testFilm.toString(), addedFilm.toString());
     }
 }
 
