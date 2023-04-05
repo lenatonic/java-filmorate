@@ -3,13 +3,18 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FilmControllerTest {
-    private FilmController filmController = new FilmController();
+    private InMemoryFilmStorage inMemoryFilmStorage = new InMemoryFilmStorage();
+    private FilmService filmService = new FilmService();
+    private FilmController filmController = new FilmController(inMemoryFilmStorage,
+            filmService);
 
     @Test
     public void shouldReturnFilmAfterMethodAddFilm() {
@@ -40,7 +45,7 @@ public class FilmControllerTest {
         filmController.addFilm(testFilm);
 
         Film testUpdateFilm = Film.builder()
-                .id(1)
+                .id(1L)
                 .name("updateFilm")
                 .description("updateDescFilm")
                 .rate(1)
