@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -10,9 +11,11 @@ import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 import javax.validation.Valid;
 import java.util.ArrayList;
 
+
 @Slf4j
 @RestController
 public class FilmController {
+
     private final InMemoryFilmStorage inMemoryFilmStorage;
     private final FilmService filmService;
 
@@ -27,11 +30,13 @@ public class FilmController {
         log.debug("Добавлен новый фильм: " + film.getName());
         Film addedFilm = inMemoryFilmStorage.addFilm(film);
         filmService.addLike(film.getId(), null);
+
         return film;
     }
 
     @PutMapping(value = "/films")
     public Film updateFilm(@Valid @RequestBody Film film) {
+
         log.debug("Внесены изменения фильма: " + film.getName());
         return inMemoryFilmStorage.updateFilm(film);
     }
@@ -45,6 +50,7 @@ public class FilmController {
 
     @GetMapping(value = "/films")
     public ArrayList<Film> findAllFilms() {
+
         log.debug("Выводим список фильмов: ");
         return inMemoryFilmStorage.findAllFilms();
     }
@@ -74,3 +80,4 @@ public class FilmController {
         return filmService.deleteLike(id, userId);
     }
 }
+
