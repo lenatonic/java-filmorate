@@ -12,7 +12,7 @@ import java.util.HashMap;
 @Data
 public class InMemoryUserStorage implements UserStorage {
     private final HashMap<Long, User> users = new HashMap<>();
-    private Long id = 0l;
+    private Long id = 0L;
 
     @Override
     public User addUser(User user) {
