@@ -26,7 +26,7 @@ public class UserService {
         return inMemoryUserStorage.updateUser(user);
     }
 
-    public ArrayList<User> findAllUser() {
+    public List<User> findAllUser() {
         return inMemoryUserStorage.findAllUser();
     }
 
@@ -35,12 +35,12 @@ public class UserService {
         User user = inMemoryUserStorage.findUser(idUser);
         User friendUser = inMemoryUserStorage.findUser(idFriend);
 
-        if (inMemoryUserStorage.getUsers().get(idUser).getFriends()
+        if (inMemoryUserStorage.findUser(idUser).getFriends()
                 .contains(idFriend)) {
             throw new NotFoundException("Пользователь уже в друзьях");
         }
-        inMemoryUserStorage.getUsers().get(idUser).getFriends().add(idFriend);
-        inMemoryUserStorage.getUsers().get(idFriend).getFriends().add(idUser);
+        inMemoryUserStorage.findUser(idUser).getFriends().add(idFriend);
+        inMemoryUserStorage.findUser(idFriend).getFriends().add(idUser);
         return user;
     }
 
@@ -68,7 +68,7 @@ public class UserService {
             allFriendsId = user.getFriends();
         }
         for (Long friendId : allFriendsId) {
-            allFriends.add(inMemoryUserStorage.getUsers().get(friendId));
+            allFriends.add(inMemoryUserStorage.findUser(friendId));
         }
         return allFriends;
     }

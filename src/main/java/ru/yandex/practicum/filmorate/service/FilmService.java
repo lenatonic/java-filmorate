@@ -6,7 +6,11 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -48,18 +52,25 @@ public class FilmService {
 
     public List<Film> findTop(Integer count) {
         List<Film> top = new ArrayList<>();
-        List list = new ArrayList(inMemoryFilmStorage.getFilms().entrySet());
         int control = 0;
-        Collections.sort(list, Comparator.comparing(
-                (Map.Entry<Long, Film> a) -> a.getValue().getLikes().size()).reversed());
 
-        for (Object el : list) {
-            Map.Entry<Long, Film> map = (Map.Entry<Long, Film>) el;
+        List<Film> list = inMemoryFilmStorage.findAllFilms().stream()
+                .sorted((Comparator.comparingInt(x -> x.getLikes().size())))
+                .collect(Collectors.toList());
+        Collections.reverse(list);
+
+        if (count > inMemoryFilmStorage.findAllFilms().size()) {
+            count = inMemoryFilmStorage.findAllFilms().size();
+        }
+
+        for (Film film : list) {
             if (control == count) {
                 break;
             }
-            top.add(map.getValue());
-            control++;
+            for (int i = 0; i < count; i++) {
+                top.add(film);
+                control++;
+            }
         }
         return top;
     }
