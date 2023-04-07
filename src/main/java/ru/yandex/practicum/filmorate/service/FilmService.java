@@ -1,53 +1,64 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class FilmService {
-    private final HashMap<Long, Set<Long>> likes = new HashMap<>();
+    private final InMemoryFilmStorage inMemoryFilmStorage;
 
-    public Long addLike(Long idFilm, Long idUser) {
-        if (idUser == null) {
-            likes.put(idFilm, new HashSet<>());
-            return idFilm;
-        }
-        if (likes.containsKey(idFilm)) {
-            likes.get(idFilm).add(idUser);
-        } else {
-            likes.put(idFilm, new HashSet<>());
-            likes.get(idFilm).add(idUser);
-        }
-        return idFilm;
+    public Film addFilm(Film film) {
+        return inMemoryFilmStorage.addFilm(film);
+    }
+
+    public Film updateFilm(Film film) {
+        return inMemoryFilmStorage.updateFilm(film);
+    }
+
+    public Film addLike(Long idFilm, Long idUser) {
+        Film addedLikeFilm = inMemoryFilmStorage.findFilm(idFilm);
+        inMemoryFilmStorage.findFilm(idFilm);
+        inMemoryFilmStorage.findFilm(idFilm).getLikes().add(idUser);
+        return addedLikeFilm;
+    }
+
+    public List<Film> findAllFilms() {
+        return inMemoryFilmStorage.findAllFilms();
+    }
+
+    public Film findFilm(Long id) {
+        return inMemoryFilmStorage.findFilm(id);
     }
 
     public Long deleteLike(Long idFilm, Long idUser) {
-        if (likes.containsKey(idFilm) && likes.get(idFilm).contains(idUser)) {
-            likes.get(idFilm).remove(idUser);
+        Film deleteLikeFilm = inMemoryFilmStorage.findFilm(idFilm);
+        if (deleteLikeFilm.getLikes().contains(idUser)) {
+            inMemoryFilmStorage.findFilm(idFilm).getLikes().remove(idUser);
         } else {
             throw new NotFoundException("Вы не ставили лайк этому фильму");
         }
         return idUser;
     }
 
-    public ArrayList<Long> findTop(Integer count) {
-        ArrayList<Long> top = new ArrayList<>();
-        List list = new ArrayList(likes.entrySet());
+    public List<Film> findTop(Integer count) {
+        List<Film> top = new ArrayList<>();
+        List list = new ArrayList(inMemoryFilmStorage.getFilms().entrySet());
         int control = 0;
+        Collections.sort(list, Comparator.comparing(
+                (Map.Entry<Long, Film> a) -> a.getValue().getLikes().size()).reversed());
 
-        Collections.sort(list, Comparator.comparingLong(
-                (Map.Entry<Long, HashSet<Integer>> a) -> a.getValue().size()).reversed());
-        if (count > list.size()) {
-            count = list.size();
-        }
         for (Object el : list) {
-            Map.Entry<Long, HashSet<Integer>> map = (Map.Entry<Long, HashSet<Integer>>) el;
+            Map.Entry<Long, Film> map = (Map.Entry<Long, Film>) el;
             if (control == count) {
                 break;
             }
-            top.add(map.getKey());
+            top.add(map.getValue());
             control++;
         }
         return top;

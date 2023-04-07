@@ -7,18 +7,21 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 @Component
 @Data
 public class InMemoryFilmStorage implements FilmStorage {
-    private final HashMap<Long, Film> films = new HashMap<>();
+    private HashMap<Long, Film> films = new HashMap<>();
     private Long id = 0L;
 
     @Override
     public Film addFilm(Film film) {
+        Film addedFilm = film;
+        addedFilm.setLikes(new HashSet<>());
         film.setId(++id);
-        films.put(id, film);
-        return films.get(id);
+        films.put(film.getId(), addedFilm);
+        return film;
     }
 
     @Override
@@ -26,7 +29,9 @@ public class InMemoryFilmStorage implements FilmStorage {
         if (!films.containsKey(film.getId())) {
             throw new NotFoundException("Неверно указан id");
         }
-        films.put(film.getId(), film);
+        Film updateFilm = film;
+        updateFilm.setLikes(films.get(film.getId()).getLikes());
+        films.put(film.getId(), updateFilm);
         return film;
     }
 
@@ -35,9 +40,10 @@ public class InMemoryFilmStorage implements FilmStorage {
         return new ArrayList<>(films.values());
     }
 
-    public void validationIdFilm(Long id) {
+    public Film findFilm(Long id) {
         if (!films.containsKey(id)) {
-            throw new NotFoundException("Нет пользователя с таким id");
+            throw new NotFoundException("Нет фильма с таким id");
         }
+        return films.get(id);
     }
 }

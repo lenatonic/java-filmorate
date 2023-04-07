@@ -1,83 +1,69 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-
+import java.util.List;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 public class FilmController {
-
-    private final InMemoryFilmStorage inMemoryFilmStorage;
     private final FilmService filmService;
-
-    @Autowired
-    public FilmController(InMemoryFilmStorage inMemoryFilmStorage, FilmService filmService) {
-        this.inMemoryFilmStorage = inMemoryFilmStorage;
-        this.filmService = filmService;
-    }
 
     @PostMapping(value = "/films")
     public Film addFilm(@Valid @RequestBody Film film) {
+        Film request = filmService.addFilm(film);
         log.debug("Добавлен новый фильм: " + film.getName());
-        Film addedFilm = inMemoryFilmStorage.addFilm(film);
-        filmService.addLike(film.getId(), null);
-
         return film;
     }
 
     @PutMapping(value = "/films")
     public Film updateFilm(@Valid @RequestBody Film film) {
-
+        Film request = filmService.updateFilm(film);
         log.debug("Внесены изменения фильма: " + film.getName());
-        return inMemoryFilmStorage.updateFilm(film);
+        return film;
     }
 
     @PutMapping(value = "/films/{id}/like/{userId}")
-    public Long addLike(@PathVariable("id") Long id,
+    public Film addLike(@PathVariable("id") Long id,
                         @PathVariable("userId") Long userId) {
+        Film request = filmService.addLike(id, userId);
         log.debug("Ставим like фильму ");
-        return filmService.addLike(id, userId);
+        return request;
     }
 
     @GetMapping(value = "/films")
-    public ArrayList<Film> findAllFilms() {
-
+    public List<Film> findAllFilms() {
+        List<Film> request = filmService.findAllFilms();
         log.debug("Выводим список фильмов: ");
-        return inMemoryFilmStorage.findAllFilms();
+        return request;
     }
 
     @GetMapping(value = "/films/{id}")
     public Film findFilm(@PathVariable("id") Long id) {
-        inMemoryFilmStorage.validationIdFilm(id);
+        Film request = filmService.findFilm(id);
         log.debug("Находим фильм по id: " + id);
-        return inMemoryFilmStorage.getFilms().get(id);
+        return request;
     }
 
     @GetMapping(value = "/films/popular")
-    public ArrayList<Film> findTop(@RequestParam(defaultValue = "10") Integer count) {
-        ArrayList<Film> top = new ArrayList<>();
-        ArrayList<Long> request = filmService.findTop(count);
-        for (Long id : request) {
-            top.add(inMemoryFilmStorage.getFilms().get(id));
-        }
+    public List<Film> findTop(@RequestParam(defaultValue = "10") Integer count) {
+        List<Film> request = filmService.findTop(count);
         log.debug("Находим список популярных фильмов: ");
-        return top;
+        return request;
     }
 
     @DeleteMapping(value = "/films/{id}/like/{userId}")
     public Long deleteLike(@PathVariable("id") Long id,
                            @PathVariable("userId") Long userId) {
+        Long request = filmService.deleteLike(id, userId);
         log.debug("Удаляем лайк у фильма с id: " + id);
-        return filmService.deleteLike(id, userId);
+        return request;
     }
 }
 

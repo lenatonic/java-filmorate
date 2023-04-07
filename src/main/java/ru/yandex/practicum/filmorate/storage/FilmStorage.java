@@ -5,9 +5,9 @@ import ru.yandex.practicum.filmorate.model.Film;
 import java.util.ArrayList;
 
 public interface FilmStorage {
-    public Film addFilm(Film film);
+    Film addFilm(Film film);
 
-    public Film updateFilm(Film film);
+    Film updateFilm(Film film);
 
-    public ArrayList<Film> findAllFilms();
+    ArrayList<Film> findAllFilms();
 }

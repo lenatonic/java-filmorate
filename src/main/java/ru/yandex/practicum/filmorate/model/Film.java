@@ -5,10 +5,10 @@ import lombok.Data;
 import ru.yandex.practicum.filmorate.validator.ReleaseDate;
 
 import javax.validation.constraints.NotBlank;
-
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 @Builder
@@ -28,4 +28,6 @@ public class Film {
 
     @ReleaseDate
     private LocalDate releaseDate;
+
+    private Set<Long> likes;
 }

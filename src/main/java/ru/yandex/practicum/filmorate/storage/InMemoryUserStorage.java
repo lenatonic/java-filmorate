@@ -7,18 +7,21 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 @Component
 @Data
 public class InMemoryUserStorage implements UserStorage {
-    private final HashMap<Long, User> users = new HashMap<>();
+    private HashMap<Long, User> users = new HashMap<>();
     private Long id = 0L;
 
     @Override
     public User addUser(User user) {
         validationUserName(user);
         user.setId(++id);
-        users.put(id, user);
+        User addedUser = user;
+        addedUser.setFriends(new HashSet<>());
+        users.put(user.getId(), addedUser);
         return user;
     }
 
@@ -28,7 +31,10 @@ public class InMemoryUserStorage implements UserStorage {
             throw new NotFoundException("Неверно указан id");
         }
         validationUserName(user);
-        users.put(user.getId(), user);
+        User updatedUser = user;
+        updatedUser.setFriends(users.get(user.getId()).getFriends());
+
+        users.put(user.getId(), updatedUser);
         return user;
     }
 
@@ -38,14 +44,16 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     public void validationUserName(User user) {
-        if (user.getName() == null || user.getName() == " " || user.getName().isBlank()) {
+        if (user.getName().equals(null) || user.getName().equals(" ") || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
     }
 
-    public void validationIdUser(Long id) {
+    public User findUser(Long id) {
         if (!users.containsKey(id)) {
             throw new NotFoundException("Нет пользователя с таким id");
+        } else {
+            return users.get(id);
         }
     }
 }
