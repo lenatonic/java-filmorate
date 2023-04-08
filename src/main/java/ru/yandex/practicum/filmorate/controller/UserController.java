@@ -18,13 +18,13 @@ public class UserController {
 
     @PostMapping(value = "/users")
     public User addUser(@Valid @RequestBody User user) {
-        log.debug("Создан новый пользователь: ", user);
+        log.debug("Создан новый пользователь: {}", user);
         return userService.addUser(user);
     }
 
     @PutMapping(value = "/users")
     public User updateUser(@Valid @RequestBody User user) {
-        log.debug("Обновлены данные для пользователя: ", user.getId());
+        log.debug("Обновлены данные для пользователя: {}", user.getId());
         return userService.updateUser(user);
     }
 

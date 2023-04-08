@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FilmService {
     private final InMemoryFilmStorage inMemoryFilmStorage;
+    private final UserService userService;
 
     public Film addFilm(Film film) {
         return inMemoryFilmStorage.addFilm(film);
@@ -27,8 +28,8 @@ public class FilmService {
 
     public Film addLike(Long idFilm, Long idUser) {
         Film addedLikeFilm = inMemoryFilmStorage.findFilm(idFilm);
-        inMemoryFilmStorage.findFilm(idFilm);
-        inMemoryFilmStorage.findFilm(idFilm).getLikes().add(idUser);
+        userService.findUser(idUser);
+        addedLikeFilm.getLikes().add(idUser);
         return addedLikeFilm;
     }
 
@@ -43,7 +44,7 @@ public class FilmService {
     public Long deleteLike(Long idFilm, Long idUser) {
         Film deleteLikeFilm = inMemoryFilmStorage.findFilm(idFilm);
         if (deleteLikeFilm.getLikes().contains(idUser)) {
-            inMemoryFilmStorage.findFilm(idFilm).getLikes().remove(idUser);
+            deleteLikeFilm.getLikes().remove(idUser);
         } else {
             throw new NotFoundException("Вы не ставили лайк этому фильму");
         }

@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -10,10 +11,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-
+@SpringBootApplication
 public class UserService {
 
     private final InMemoryUserStorage inMemoryUserStorage;
@@ -30,17 +32,16 @@ public class UserService {
         return inMemoryUserStorage.findAllUser();
     }
 
-
     public User addFriend(Long idUser, Long idFriend) {
         User user = inMemoryUserStorage.findUser(idUser);
         User friendUser = inMemoryUserStorage.findUser(idFriend);
 
-        if (inMemoryUserStorage.findUser(idUser).getFriends()
+        if (user.getFriends()
                 .contains(idFriend)) {
             throw new NotFoundException("Пользователь уже в друзьях");
         }
-        inMemoryUserStorage.findUser(idUser).getFriends().add(idFriend);
-        inMemoryUserStorage.findUser(idFriend).getFriends().add(idUser);
+        user.getFriends().add(idFriend);
+        friendUser.getFriends().add(idUser);
         return user;
     }
 
@@ -54,6 +55,7 @@ public class UserService {
         if (!user.getFriends().contains(idFriend)) {
             throw new NotFoundException("Ошибка при удалении. Нет друга с таким id");
         }
+        friend.getFriends().remove(idUser);
         user.getFriends().remove(idFriend);
         return user;
     }
@@ -62,11 +64,7 @@ public class UserService {
         User user = inMemoryUserStorage.findUser(idUser);
         List<User> allFriends = new ArrayList<>();
         Set<Long> allFriendsId = new HashSet<>();
-        if (user.getFriends().isEmpty()) {
-            throw new NotFoundException("У этого пользователя пока нет друзей");
-        } else {
-            allFriendsId = user.getFriends();
-        }
+        allFriendsId = user.getFriends();
         for (Long friendId : allFriendsId) {
             allFriends.add(inMemoryUserStorage.findUser(friendId));
         }
@@ -76,28 +74,11 @@ public class UserService {
     public List<User> findCommonFriends(Long idUser, Long otherId) {
         User user = inMemoryUserStorage.findUser(idUser);
         User otherUser = inMemoryUserStorage.findUser(otherId);
-        List<User> commonFriends = new ArrayList<>();
 
-        if (user.getFriends().isEmpty() || otherUser.getFriends().isEmpty()) {
-            return commonFriends;
-        }
-
-        List<User> friendsUser = new ArrayList<>();
-        List<User> friendsOtherUser = new ArrayList<>();
-
-        for (Long userFriend : user.getFriends()) {
-            friendsUser.add(inMemoryUserStorage.findUser(userFriend));
-        }
-
-        for (Long otherFriend : otherUser.getFriends()) {
-            friendsOtherUser.add(inMemoryUserStorage.findUser(otherFriend));
-        }
-
-        for (User friend : friendsUser) {
-            if (friendsOtherUser.contains(friend)) {
-                commonFriends.add(friend);
-            }
-        }
+        List<User> commonFriends = user.getFriends().stream()
+                .filter(id -> otherUser.getFriends().contains(id))
+                .map(inMemoryUserStorage::findUser)
+                .collect(Collectors.toList());
         return commonFriends;
     }
 }

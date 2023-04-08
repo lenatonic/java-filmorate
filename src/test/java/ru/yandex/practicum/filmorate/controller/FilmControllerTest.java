@@ -4,6 +4,7 @@ package ru.yandex.practicum.filmorate.controller;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import java.time.LocalDate;
@@ -12,7 +13,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FilmControllerTest {
     private InMemoryFilmStorage inMemoryFilmStorage = new InMemoryFilmStorage();
-    private FilmService filmService = new FilmService(inMemoryFilmStorage);
+    private UserService userService;
+    private FilmService filmService = new FilmService(inMemoryFilmStorage, userService);
     private FilmController filmController = new FilmController(filmService);
 
     @Test
