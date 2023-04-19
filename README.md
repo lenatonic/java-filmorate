@@ -1,7 +1,7 @@
 # java-filmorate
 Template repository for Filmorate project.
 
-##ER-diagram
+## ER-diagram  
 ![image](src/main/resources/ER_filmorate.png)
 
 Ссылка на ER-diagram на ресурсе dbdiagram.io:
@@ -22,7 +22,7 @@ friendship(таблица с парами друзей) по PK, который 
 приложении ещё не реализована.
 
 Запросы были проверены в https://www.db-fiddle.com/ с параметром DataBase: MySQL 5.7
-###Примеры запросов по логике работы с фильмами:
+### Примеры запросов по логике работы с фильмами:
 
 **Добавить фильм (addFilm):**
 ```roomsql
@@ -60,7 +60,7 @@ ORDER BY COUNT(id_user) desc;
 ```roomsql
 DELETE FROM likes_list WHERE id_user = 1;
 ```
-###Примеры запросов по логике работы с пользователями:
+### Примеры запросов по логике работы с пользователями:  
 **Добавить пользователя (addUser):**
 ```roomsql
 INSERT INTO users (id,name,email,login,birthday)
