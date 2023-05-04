@@ -1,8 +1,8 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.Data;
 
+@Data
 public class ErrorResponse {
     String error;
     String description;
