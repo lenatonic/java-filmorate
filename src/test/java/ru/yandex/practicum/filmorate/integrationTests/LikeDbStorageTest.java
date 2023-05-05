@@ -71,6 +71,7 @@ public class LikeDbStorageTest {
         filmDbStorage.addFilm(filmFirst);
         filmDbStorage.addFilm(filmTwo);
     }
+
     @Test
     void testAddLike() {
         likeDbStorage.addLike(1L, 1L);
