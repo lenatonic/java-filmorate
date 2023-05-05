@@ -70,20 +70,16 @@ public class LikeDbStorageTest {
 
         filmDbStorage.addFilm(filmFirst);
         filmDbStorage.addFilm(filmTwo);
-
     }
     @Test
     void testAddLike() {
         likeDbStorage.addLike(1L, 1L);
         List<Long> likeFilm1 = likeDbStorage.findTop(10);
-
         likeDbStorage.addLike(1L, 2L);
         likeDbStorage.addLike(2L, 2L);
         List<Long> likeFilm12 = likeDbStorage.findTop(5);
-
         likeDbStorage.deleteLike(2L, 2L);
         List<Long> likeFilmAfterDelete = likeDbStorage.findTop(5);
-
         assertThat(likeFilm1.get(0)).isEqualTo(1);
         assertThat(likeFilm12.get(0)).isEqualTo(1);
         assertThat(likeFilm12.get(1)).isEqualTo(2);
