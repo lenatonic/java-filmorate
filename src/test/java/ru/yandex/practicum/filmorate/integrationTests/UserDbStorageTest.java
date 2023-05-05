@@ -101,5 +101,4 @@ public class UserDbStorageTest {
         List<User> allUsers = userDbStorage.findAllUser();
         assertThat(allUsers.size()).isEqualTo(2);
     }
-
 }

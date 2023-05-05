@@ -27,10 +27,10 @@ public class MpaDbStorageTest {
         assertThat(allMpa.get(3).getName()).isEqualTo("R");
         assertThat(allMpa.get(4).getName()).isEqualTo("NC-17");
     }
+
     @Test
     void testFindMpa() {
         Mpa mpa = mpaDbStorage.findMpa(1);
         assertThat(mpa.getName()).isEqualTo("G");
     }
-
 }
