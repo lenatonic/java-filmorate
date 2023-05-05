@@ -1,14 +1,20 @@
+
 package ru.yandex.practicum.filmorate.controller;
 
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UserControllerTest {
-    private UserController userController = new UserController();
+    private InMemoryUserStorage inMemoryUserStorage = new InMemoryUserStorage();
+    private UserService userService = new UserService(inMemoryUserStorage);
+    private UserController userController = new UserController(userService);
 
     @Test
     public void shouldReturnUserAfterMethodAddUser() {
@@ -18,6 +24,7 @@ public class UserControllerTest {
                 .email("newUser@mail.ru")
                 .login("loginUser")
                 .birthday(LocalDate.of(2010, 10, 10))
+                .friends(new HashSet<>())
                 .build();
 
         User addedUser = userController.addUser(testUser);
@@ -28,7 +35,7 @@ public class UserControllerTest {
     @Test
     public void shouldReturnUserAfterMethodAddUserIfNameEmpty() {
         User testUser = User.builder()
-                .name(null)
+                .name("")
                 .email("newUser@mail.ru")
                 .login("loginUser")
                 .birthday(LocalDate.of(2010, 10, 10))
@@ -37,11 +44,12 @@ public class UserControllerTest {
         User addedUser = userController.addUser(testUser);
 
         User validateUser = User.builder()
-                .id(1)
+                .id(1L)
                 .name("loginUser")
                 .email("newUser@mail.ru")
                 .login("loginUser")
                 .birthday(LocalDate.of(2010, 10, 10))
+                .friends(new HashSet<>())
                 .build();
 
         assertEquals(validateUser.toString(), addedUser.toString());
@@ -59,7 +67,7 @@ public class UserControllerTest {
         userController.addUser(testUser);
 
         User updateUser = User.builder()
-                .id(1)
+                .id(1L)
                 .name("updateUser")
                 .email("updateUser@mail.ru")
                 .login("loginUpdateUser")
@@ -82,7 +90,7 @@ public class UserControllerTest {
         userController.addUser(testUser);
 
         User updateUser = User.builder()
-                .id(1)
+                .id(1L)
                 .name("")
                 .email("newUser@mail.ru")
                 .login("loginUpdateUser")
@@ -92,11 +100,12 @@ public class UserControllerTest {
         User addedUser = userController.updateUser(updateUser);
 
         User validateUser = User.builder()
-                .id(1)
+                .id(1L)
                 .name("loginUpdateUser")
                 .email("newUser@mail.ru")
                 .login("loginUpdateUser")
                 .birthday(LocalDate.of(2010, 10, 10))
+                .friends(new HashSet<>())
                 .build();
 
         assertEquals(validateUser.toString(), addedUser.toString());
@@ -114,7 +123,7 @@ public class UserControllerTest {
         userController.addUser(testUser);
 
         User updateUser = User.builder()
-                .id(1)
+                .id(1L)
                 .name("updateUser")
                 .email("newUpdateUser@mail.ru")
                 .login("loginUpdateUser")
