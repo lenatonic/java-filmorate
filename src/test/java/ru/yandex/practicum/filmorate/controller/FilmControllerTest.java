@@ -1,17 +1,17 @@
 
 package ru.yandex.practicum.filmorate.controller;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.jdbc.core.JdbcTemplate;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.like.LikeDbStorage;
-
-import java.time.LocalDate;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+//import org.junit.jupiter.api.Test;
+//import org.springframework.jdbc.core.JdbcTemplate;
+//import ru.yandex.practicum.filmorate.model.Film;
+//import ru.yandex.practicum.filmorate.service.FilmService;
+//import ru.yandex.practicum.filmorate.service.UserService;
+//import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
+//import ru.yandex.practicum.filmorate.storage.like.LikeDbStorage;
+//
+//import java.time.LocalDate;
+//
+//import static org.junit.jupiter.api.Assertions.assertEquals;
 
 //public class FilmControllerTest {
 //    private InMemoryFilmStorage inMemoryFilmStorage = new InMemoryFilmStorage();

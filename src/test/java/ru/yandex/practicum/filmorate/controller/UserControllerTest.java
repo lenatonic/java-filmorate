@@ -1,7 +1,7 @@
 
 package ru.yandex.practicum.filmorate.controller;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+//import static org.junit.jupiter.api.Assertions.assertEquals;
 
 //public class UserControllerTest {
 //    private InMemoryUserStorage inMemoryUserStorage = new InMemoryUserStorage();
