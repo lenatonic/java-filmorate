@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.integrationTests;
 
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,11 @@ public class FriendshipDbStorageTest {
                 .build();
     }
 
+    @AfterEach
+    void end() {
+        userDbStorage.deleteAllUser();
+    }
+
     @Test
     void testFindCommonFriends() {
         User testUser1 = userDbStorage.addUser(user1);
@@ -63,9 +69,11 @@ public class FriendshipDbStorageTest {
 
     @Test
     void testAddFriendAndFindAllFriends() {
+        User testUser1 = userDbStorage.addUser(user1);
+        User testUser2 = userDbStorage.addUser(user2);
         friendshipDbStorage.addFriend(1L, 2L);
         List<Long> friend12 = friendshipDbStorage.findAllFriends(1L);
-        assertThat(friend12.get(1)).isEqualTo(2);
+        assertThat(friend12.get(0)).isEqualTo(2);
     }
 
     @Test

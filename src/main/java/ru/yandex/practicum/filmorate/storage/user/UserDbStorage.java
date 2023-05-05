@@ -94,4 +94,10 @@ public class UserDbStorage implements UserStorage {
             user.setName(user.getLogin());
         }
     }
+
+    public void deleteAllUser() {
+        String sql = "DELETE FROM LIKES_LIST;ALTER TABLE USERS ALTER COLUMN USER_ID RESTART WITH 1;\n" +
+                "DELETE FROM USERS;";
+        jdbcTemplate.update(sql);
+    }
 }
