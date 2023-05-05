@@ -4,8 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
@@ -13,7 +11,6 @@ import java.util.List;
 
 @Slf4j
 @RestController
-//@RequiredArgsConstructor
 public class FilmController {
     private final FilmService filmService;
 
@@ -71,25 +68,5 @@ public class FilmController {
         Long request = filmService.deleteLike(id, userId);
         log.debug("Удаляем лайк у фильма с id: " + id);
         return request;
-    }
-
-    @GetMapping(value = "/mpa")
-    public List<Mpa> findAllMpa() {
-        return filmService.findAllMpa();
-    }
-
-    @GetMapping(value = "/mpa/{id}")
-    public Mpa findMpa(@PathVariable("id") int id) {
-        return filmService.findMpa(id);
-    }
-
-    @GetMapping(value = "/genres")
-    public List<Genre> findAllGenres() {
-        return filmService.findAllGenres();
-    }
-
-    @GetMapping(value = "/genres/{id}")
-    public Genre findGenre(@PathVariable("id") int id) {
-        return filmService.findGenre(id);
     }
 }

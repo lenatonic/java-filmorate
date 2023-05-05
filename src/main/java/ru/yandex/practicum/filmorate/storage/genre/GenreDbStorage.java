@@ -23,6 +23,7 @@ public class GenreDbStorage implements GenreStorage {
     public GenreDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
+
     @Override
     public List<Genre> findAllGenres() {
         List<Genre> result = new ArrayList<>();
