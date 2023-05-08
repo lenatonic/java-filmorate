@@ -6,19 +6,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.user.UserDbStorage;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class FriendshipDbStorage implements FriendshipStorage {
     private JdbcTemplate jdbcTemplate;
+    private UserDbStorage userDbStorage;
 
     private final Logger log = LoggerFactory.getLogger(FriendshipDbStorage.class);
 
     @Autowired
-    public FriendshipDbStorage(JdbcTemplate jdbcTemplate) {
+    public FriendshipDbStorage(JdbcTemplate jdbcTemplate, UserDbStorage userDbStorage) {
         this.jdbcTemplate = jdbcTemplate;
+        this.userDbStorage = userDbStorage;
     }
 
     @Override
@@ -49,11 +56,12 @@ public class FriendshipDbStorage implements FriendshipStorage {
     }
 
     @Override
-    public List<Long> findAllFriends(Long userId) {
-        List<Long> allFriends = new ArrayList<>();
+    public List<User> findAllFriends(Long userId) {
+        List<User> allFriends = new ArrayList<>();
         try {
-            String sql = "SELECT FRIEND_ID FROM FRIENDSHIP WHERE USER_ID = ? AND STATUS = ?";
-            allFriends.addAll(jdbcTemplate.queryForList(sql, Long.class, userId, "CONFIRMED"));
+            String sql = "SELECT * FROM USERS WHERE USER_ID IN " +
+                    "(SELECT FRIEND_ID FROM FRIENDSHIP WHERE USER_ID = ? AND STATUS = ?)";
+            allFriends.addAll(jdbcTemplate.query(sql, this::mapRowToUser, userId, "CONFIRMED"));
         } catch (EmptyResultDataAccessException e) {
             log.info("Список друзей пуст");
         }
@@ -61,13 +69,13 @@ public class FriendshipDbStorage implements FriendshipStorage {
     }
 
     @Override
-    public List<Long> findCommonFriends(Long user1, Long user2) {
-        List<Long> commonFriends = new ArrayList<>();
+    public List<User> findCommonFriends(Long user1, Long user2) {
+        List<User> commonFriends = new ArrayList<>();
         try {
-            String sql = "SELECT USER_ID FROM USERS WHERE USER_ID IN (SELECT FRIEND_ID FROM (SELECT * " +
+            String sql = "SELECT * FROM USERS WHERE USER_ID IN (SELECT FRIEND_ID FROM (SELECT * " +
                     "FROM FRIENDSHIP WHERE USER_ID =? AND STATUS = ?) AS a WHERE " +
                     "FRIEND_ID IN (SELECT FRIEND_ID FROM FRIENDSHIP WHERE USER_ID = ? AND STATUS = ?))";
-            commonFriends.addAll(jdbcTemplate.queryForList(sql, Long.class, user1, "CONFIRMED",
+            commonFriends.addAll(jdbcTemplate.query(sql, this::mapRowToUser, user1, "CONFIRMED",
                     user2, "CONFIRMED"));
         } catch (EmptyResultDataAccessException e) {
             log.info("Нет общих друзей");
@@ -80,5 +88,15 @@ public class FriendshipDbStorage implements FriendshipStorage {
         jdbcTemplate.update("UPDATE FRIENDSHIP SET STATUS = ? WHERE USER_ID = ? AND FRIEND_ID = ?",
                 "UNCONFIRMED", userId, friendId);
         return userId;
+    }
+
+    private User mapRowToUser(ResultSet resultSet, int rowNum) throws SQLException {
+        return User.builder()
+                .id(resultSet.getLong("USER_ID"))
+                .name(resultSet.getString("USER_NAME"))
+                .email(resultSet.getString("email"))
+                .login(resultSet.getString("login"))
+                .birthday(resultSet.getObject("birthday", LocalDate.class))
+                .build();
     }
 }

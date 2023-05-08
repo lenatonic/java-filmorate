@@ -1,8 +1,8 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -17,19 +17,14 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
+@RequiredArgsConstructor
+@Slf4j
 @Repository("userDbStorage")
 public class UserDbStorage implements UserStorage {
-    private final Logger log = LoggerFactory.getLogger(UserDbStorage.class);
     private final JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    public UserDbStorage(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 
     @Override
     public User addUser(User user) {
-        validationUserName(user);
         String sql = "INSERT INTO users (USER_NAME,email,login,birthday)" +
                 "Values (?, ?, ?, ?)";
 
@@ -50,7 +45,6 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User updateUser(User user) {
         findUser(user.getId());//если не находит, выбрасывает NotFoundException
-        validationUserName(user);
         String sql = "UPDATE users SET USER_NAME = ?, email = ?," +
                 "login = ?, birthday = ? WHERE USER_ID = ?";
         jdbcTemplate.update(sql,
@@ -70,13 +64,13 @@ public class UserDbStorage implements UserStorage {
     }
 
     public User findUser(Long id) {
-        List<Long> users = jdbcTemplate.queryForList("SELECT USER_ID FROM USERS", Long.class);
-        if (!users.contains(id)) {
+        try {
+            return jdbcTemplate.queryForObject("SELECT * FROM USERS WHERE USER_ID = ?",
+                    this::mapRowToUser, id);
+        } catch (EmptyResultDataAccessException e) {
             log.info("Пользователь с идентификатором {} не найден.", id);
             throw new NotFoundException("Пользователь не найден");
         }
-        return jdbcTemplate.queryForObject("SELECT * FROM USERS WHERE USER_ID = ?",
-                this::mapRowToUser, id);
     }
 
     private User mapRowToUser(ResultSet resultSet, int rowNum) throws SQLException {
@@ -87,12 +81,6 @@ public class UserDbStorage implements UserStorage {
                 .login(resultSet.getString("login"))
                 .birthday(resultSet.getObject("birthday", LocalDate.class))
                 .build();
-    }
-
-    private void validationUserName(User user) {
-        if (user.getName() == null || user.getName().equals(" ") || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
     }
 
     public void deleteAllUser() {

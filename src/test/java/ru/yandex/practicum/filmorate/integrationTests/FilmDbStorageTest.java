@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.integrationTests;
 
-
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ public class FilmDbStorageTest {
                 .build();
 
         Genre genre = Genre.builder()
-                .id(2)
+                .id(1)
                 .build();
 
         filmTwo = Film.builder()
@@ -83,10 +83,15 @@ public class FilmDbStorageTest {
         filmThree.getGenres().add(genreForFilmTree2);
     }
 
+    @AfterEach
+    void end() {
+        filmStorage.deleteAllFilms();
+    }
+
     @Test
     void addFilmWithoutGenre() {
         Film testFilm = filmStorage.addFilm(filmFirst);
-        assertThat(testFilm.getId()).isEqualTo(3);
+        assertThat(testFilm.getId()).isEqualTo(1);
         assertThat(testFilm.getName()).isEqualTo(filmFirst.getName());
         assertThat(testFilm.getDescription()).isEqualTo(filmFirst.getDescription());
         assertThat(testFilm.getReleaseDate()).isEqualTo(filmFirst.getReleaseDate());
@@ -113,7 +118,7 @@ public class FilmDbStorageTest {
     @Test
     void addFilmWithTwoGenres() {
         Film testFilm = filmStorage.addFilm(filmThree);
-        assertThat(testFilm.getId()).isEqualTo(2);
+        assertThat(testFilm.getId()).isEqualTo(1);
         assertThat(testFilm.getName()).isEqualTo(filmThree.getName());
         assertThat(testFilm.getDescription()).isEqualTo(filmThree.getDescription());
         assertThat(testFilm.getReleaseDate()).isEqualTo(filmThree.getReleaseDate());
@@ -125,6 +130,8 @@ public class FilmDbStorageTest {
 
     @Test
     void updateFilm() {
+        Film testFilm1 = filmStorage.addFilm(filmFirst);
+        Film testFilm2 = filmStorage.addFilm(filmTwo);
         Film testFilm = filmStorage.updateFilm(filmUpdate);
         assertThat(testFilm.getId()).isEqualTo(2);
         assertThat(testFilm.getName()).isEqualTo(filmUpdate.getName());
@@ -137,14 +144,19 @@ public class FilmDbStorageTest {
 
     @Test
     void findAllFilms() {
+        Film testFilm1 = filmStorage.addFilm(filmFirst);
+        Film testFilm2 = filmStorage.addFilm(filmTwo);
+        Film testFilm3 = filmStorage.addFilm(filmThree);
         List<Film> allFilms = filmStorage.findAllFilms();
         assertThat(allFilms.size()).isEqualTo(3);
+
     }
 
     @Test
     void findFilm() {
-        Film testFilm = filmStorage.findFilm(1L);
+        Film testFilm2 = filmStorage.addFilm(filmTwo);
         filmTwo.getMpa().setName("PG");
+        Film testFilm = filmStorage.findFilm(1L);
         assertThat(testFilm.getName()).isEqualTo(filmTwo.getName());
         assertThat(testFilm.getDescription()).isEqualTo(filmTwo.getDescription());
         assertThat(testFilm.getReleaseDate()).isEqualTo(filmTwo.getReleaseDate());

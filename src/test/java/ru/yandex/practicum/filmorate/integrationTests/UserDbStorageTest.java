@@ -66,16 +66,6 @@ public class UserDbStorageTest {
     }
 
     @Test
-    void testAddUserIfNoName() {
-        User testUser = userDbStorage.addUser(userNoName);
-        assertThat(testUser.getId()).isNotNull();
-        assertThat(testUser.getName()).isEqualTo(userNoName.getLogin());
-        assertThat(testUser.getLogin()).isEqualTo(userNoName.getLogin());
-        assertThat(testUser.getEmail()).isEqualTo(userNoName.getEmail());
-        assertThat(testUser.getBirthday()).isEqualTo(userNoName.getBirthday());
-    }
-
-    @Test
     void testUpdateUser() {
         user2.setId(1L);
         User testUser = userDbStorage.updateUser(user2);

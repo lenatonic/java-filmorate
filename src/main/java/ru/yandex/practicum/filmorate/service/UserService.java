@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.friendship.FriendshipStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,16 +17,19 @@ public class UserService {
     private FriendshipStorage friendshipDbStorage;
 
     @Autowired
-    public UserService(@Qualifier("userDbStorage") UserStorage userDbStorage, FriendshipStorage friendshipDbStorage) {
+    public UserService(@Qualifier("userDbStorage") UserStorage userDbStorage,
+                       FriendshipStorage friendshipDbStorage) {
         this.userDbStorage = userDbStorage;
         this.friendshipDbStorage = friendshipDbStorage;
     }
 
     public User addUser(User user) {
+        validationUserName(user);
         return userDbStorage.addUser(user);
     }
 
     public User updateUser(User user) {
+        validationUserName(user);
         return userDbStorage.updateUser(user);
     }
 
@@ -54,20 +56,19 @@ public class UserService {
     }
 
     public List<User> findAllFriends(Long idUser) {
-        List<Long> allFriendsId = friendshipDbStorage.findAllFriends(idUser);
-        List<User> allFriends = new ArrayList<>();
-        for (Long friendId : allFriendsId) {
-            allFriends.add(userDbStorage.findUser(friendId));
-        }
+        List<User> allFriends = friendshipDbStorage.findAllFriends(idUser);
+        System.out.println(allFriends);
         return allFriends;
     }
 
     public List<User> findCommonFriends(Long idUser, Long otherId) {
-        List<Long> commonFriendsId = friendshipDbStorage.findCommonFriends(idUser, otherId);
-        List<User> commonFriends = new ArrayList<>();
-        for (Long friendId : commonFriendsId) {
-            commonFriends.add(userDbStorage.findUser(friendId));
-        }
+        List<User> commonFriends = friendshipDbStorage.findCommonFriends(idUser, otherId);
         return commonFriends;
+    }
+
+    private void validationUserName(User user) {
+        if (user.getName() == null || user.getName().equals(" ") || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
     }
 }

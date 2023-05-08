@@ -62,9 +62,8 @@ public class FriendshipDbStorageTest {
         User testUser3 = userDbStorage.addUser(user3);
         friendshipDbStorage.addFriend(1L, 3L);
         friendshipDbStorage.addFriend(2L, 3L);
-        List<Long> common12 = friendshipDbStorage.findCommonFriends(1L, 2L);
-        assertThat(common12.get(0)).isEqualTo(3);
-
+        List<User> common12 = friendshipDbStorage.findCommonFriends(1L, 2L);
+        assertThat(common12.get(0)).isEqualTo(testUser3);
     }
 
     @Test
@@ -72,14 +71,14 @@ public class FriendshipDbStorageTest {
         User testUser1 = userDbStorage.addUser(user1);
         User testUser2 = userDbStorage.addUser(user2);
         friendshipDbStorage.addFriend(1L, 2L);
-        List<Long> friend12 = friendshipDbStorage.findAllFriends(1L);
-        assertThat(friend12.get(0)).isEqualTo(2);
+        List<User> friend12 = friendshipDbStorage.findAllFriends(1L);
+        assertThat(friend12.get(0)).isEqualTo(testUser2);
     }
 
     @Test
     void testDeleteFriend() {
         friendshipDbStorage.deleteFriend(1L, 3L);
-        List<Long> friendList = friendshipDbStorage.findAllFriends(1L);
+        List<User> friendList = friendshipDbStorage.findAllFriends(1L);
         assertThat(!friendList.contains(2)).isEqualTo(true);
     }
 }

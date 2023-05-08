@@ -50,4 +50,3 @@ public class MpaDbStorage implements MpaStorage {
                 .build();
     }
 }
-
