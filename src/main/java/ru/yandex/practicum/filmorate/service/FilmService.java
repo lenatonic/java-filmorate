@@ -58,7 +58,7 @@ public class FilmService {
 
     public List<Film> findTop(int count) {
         List<Film> top = new ArrayList<>();
-        List<Long> idFilms = likeDbStorage.findTop(count);
+        List<Long> idFilms = filmDbStorage.findTop(count);
         for (Long id : idFilms) {
             top.add(findFilm(id));
         }

@@ -15,6 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -44,7 +45,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User updateUser(User user) {
-        findUser(user.getId());//если не находит, выбрасывает NotFoundException
+        findUser(user.getId());
         String sql = "UPDATE users SET USER_NAME = ?, email = ?," +
                 "login = ?, birthday = ? WHERE USER_ID = ?";
         jdbcTemplate.update(sql,
@@ -87,5 +88,20 @@ public class UserDbStorage implements UserStorage {
         String sql = "DELETE FROM LIKES_LIST;ALTER TABLE USERS ALTER COLUMN USER_ID RESTART WITH 1;\n" +
                 "DELETE FROM USERS;";
         jdbcTemplate.update(sql);
+    }
+
+    @Override
+    public List<User> findCommonFriends(Long user1, Long user2) {
+        List<User> commonFriends = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM USERS WHERE USER_ID IN (SELECT FRIEND_ID FROM (SELECT * " +
+                    "FROM FRIENDSHIP WHERE USER_ID =? AND STATUS = ?) AS a WHERE " +
+                    "FRIEND_ID IN (SELECT FRIEND_ID FROM FRIENDSHIP WHERE USER_ID = ? AND STATUS = ?))";
+            commonFriends.addAll(jdbcTemplate.query(sql, this::mapRowToUser, user1, "CONFIRMED",
+                    user2, "CONFIRMED"));
+        } catch (EmptyResultDataAccessException e) {
+            log.info("Нет общих друзей");
+        }
+        return commonFriends;
     }
 }

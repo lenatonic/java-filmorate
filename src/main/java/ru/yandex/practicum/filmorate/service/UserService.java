@@ -62,7 +62,7 @@ public class UserService {
     }
 
     public List<User> findCommonFriends(Long idUser, Long otherId) {
-        List<User> commonFriends = friendshipDbStorage.findCommonFriends(idUser, otherId);
+        List<User> commonFriends = userDbStorage.findCommonFriends(idUser, otherId);
         return commonFriends;
     }
 

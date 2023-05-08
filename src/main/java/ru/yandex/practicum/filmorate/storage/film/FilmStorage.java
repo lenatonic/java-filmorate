@@ -12,4 +12,6 @@ public interface FilmStorage {
     List<Film> findAllFilms();
 
     Film findFilm(Long id);
+
+    List<Long> findTop(int count);
 }

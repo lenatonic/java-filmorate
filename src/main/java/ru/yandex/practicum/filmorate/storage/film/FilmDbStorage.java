@@ -81,9 +81,7 @@ public class FilmDbStorage implements FilmStorage {
         Film updateFilm = film;
 
         if (film.getGenres() != null) {
-            String sqlGenres = "DELETE FROM GENRE_LIST WHERE FILM_ID = ?";
-            jdbcTemplate.update(sqlGenres,
-                    film.getId());
+            deleteGenresIdFromGenreListInFilmId(film.getId());
             insertGenreList(updateFilm);
             findAndSetGenreListWithName(film);
         }
@@ -126,7 +124,6 @@ public class FilmDbStorage implements FilmStorage {
                 film.setGenres(filmsGenres.get(film.getId()));
             }
         }
-        System.out.println(allFilms);
         return allFilms;
     }
 
@@ -141,7 +138,6 @@ public class FilmDbStorage implements FilmStorage {
                 "SELECT * FROM FILMS AS f" +
                         " JOIN MPA AS m ON m.MPA_ID = f.MPA_ID WHERE FILM_ID = ?",
                 this::mapRowToFilm, id);
-        //findAndSetNameMPA(findedFilm);
         findAndSetGenreListWithName(findedFilm);
         return findedFilm;
     }
@@ -152,6 +148,16 @@ public class FilmDbStorage implements FilmStorage {
         jdbcTemplate.update(sql);
     }
 
+    @Override
+    public List<Long> findTop(int count) {
+        String sql = "SELECT f.FILM_ID FROM FILMS AS f " +
+                "LEFT JOIN LIKES_LIST AS ll ON f.FILM_ID = ll.FILM_ID GROUP BY f.FILM_ID " +
+                "ORDER BY COUNT(ll.USER_ID) desc LIMIT ?";
+        ArrayList<Long> idFilms = new ArrayList<>();
+        idFilms.addAll(jdbcTemplate.queryForList(sql, Long.class, count));
+        return idFilms;
+    }
+
     private Film mapRowToFilm(ResultSet resultSet, int rowNum) throws SQLException {
         return Film.builder()
                 .id(resultSet.getLong("FILM_ID"))
@@ -160,16 +166,19 @@ public class FilmDbStorage implements FilmStorage {
                 .description(resultSet.getString("description"))
                 .duration(resultSet.getInt("duration"))
                 .mpa(new Mpa(resultSet.getInt("MPA_ID"), resultSet.getString("MPA_NAME")))
-                //.mpa(new Mpa(resultSet.getInt("MPA_ID")))
                 .build();
     }
 
     private void insertGenreList(Film film) {
+        List<Object[]> batch = new ArrayList<>();
         for (Genre genre : film.getGenres()) {
-            String sqlGenres = "INSERT INTO GENRE_LIST (FILM_ID, GENRE_ID)" + "Values(?, ?)";
-            jdbcTemplate.update(sqlGenres,
-                    film.getId(), genre.getId());
+            Object[] values = new Object[]{
+                    film.getId(),
+                    genre.getId()};
+            batch.add(values);
         }
+        int[] updateCounts = jdbcTemplate.batchUpdate("INSERT INTO GENRE_LIST (FILM_ID, GENRE_ID) " +
+                "Values(?, ?)", batch);
     }
 
     private void findAndSetNameMPA(Film updateFilm) {
@@ -196,5 +205,10 @@ public class FilmDbStorage implements FilmStorage {
                 .id(resultSet.getInt("GENRE_ID"))
                 .name(resultSet.getString("GENRE_NAME"))
                 .build();
+    }
+
+    private void deleteGenresIdFromGenreListInFilmId(Long id) {
+        String sqlGenres = "DELETE FROM GENRE_LIST WHERE FILM_ID = ?";
+        jdbcTemplate.update(sqlGenres, id);
     }
 }

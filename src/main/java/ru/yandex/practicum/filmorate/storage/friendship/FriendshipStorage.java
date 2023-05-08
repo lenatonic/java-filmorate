@@ -9,7 +9,5 @@ public interface FriendshipStorage {
 
     List<User> findAllFriends(Long userId);
 
-    List<User> findCommonFriends(Long user1, Long user2);
-
     Long deleteFriend(Long userId, Long friendId);
 }

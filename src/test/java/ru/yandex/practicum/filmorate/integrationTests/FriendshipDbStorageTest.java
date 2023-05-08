@@ -62,7 +62,7 @@ public class FriendshipDbStorageTest {
         User testUser3 = userDbStorage.addUser(user3);
         friendshipDbStorage.addFriend(1L, 3L);
         friendshipDbStorage.addFriend(2L, 3L);
-        List<User> common12 = friendshipDbStorage.findCommonFriends(1L, 2L);
+        List<User> common12 = userDbStorage.findCommonFriends(1L, 2L);
         assertThat(common12.get(0)).isEqualTo(testUser3);
     }
 
