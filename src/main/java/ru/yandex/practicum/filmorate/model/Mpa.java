@@ -18,5 +18,3 @@ public class Mpa {
         this.name = name;
     }
 }
-
-

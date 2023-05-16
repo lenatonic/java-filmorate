@@ -7,7 +7,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.like.LikeDbStorage;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -57,11 +56,7 @@ public class FilmService {
     }
 
     public List<Film> findTop(int count) {
-        List<Film> top = new ArrayList<>();
-        List<Long> idFilms = filmDbStorage.findTop(count);
-        for (Long id : idFilms) {
-            top.add(findFilm(id));
-        }
+        List<Film> top = filmDbStorage.findTop(count);
         return top;
     }
 }

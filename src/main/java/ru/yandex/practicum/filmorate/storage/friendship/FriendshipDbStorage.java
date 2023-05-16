@@ -30,7 +30,7 @@ public class FriendshipDbStorage implements FriendshipStorage {
 
     @Override
     public Long addFriend(Long userId, Long friendId) {
-        String result = null;
+        String result = "";
         try {
             result = jdbcTemplate.queryForObject("SELECT STATUS " +
                             "FROM FRIENDSHIP WHERE USER_ID = ? AND FRIEND_ID =?",
@@ -45,10 +45,10 @@ public class FriendshipDbStorage implements FriendshipStorage {
             jdbcTemplate.update(sql2, friendId, userId, "UNCONFIRMED");
             log.info("Отправлен запрос в друзья");
         }
-        if (result == "CONFIRMED") {
+        if (result.equals("CONFIRMED")) {
             log.info("Вы уже друзья");
         }
-        if (result == "UNCONFIRMED") {
+        if (result.equals("UNCONFIRMED")) {
             jdbcTemplate.update("UPDATE FRIENDSHIP SET STATUS = ? WHERE USER_ID = ? AND FRIEND_ID = ?",
                     "CONFIRMED", userId, friendId);
         }

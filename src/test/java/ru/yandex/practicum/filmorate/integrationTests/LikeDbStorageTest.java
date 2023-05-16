@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
@@ -57,6 +58,10 @@ public class LikeDbStorageTest {
                 .mpa(new Mpa(4))
                 .build();
 
+        Genre genre = Genre.builder()
+                .id(1)
+                .build();
+
         filmTwo = Film.builder()
                 .name("Автостопом по галактике")
                 .description("Уморительная комедия по роману Дугласа Адамса.")
@@ -65,6 +70,7 @@ public class LikeDbStorageTest {
                 .mpa(new Mpa(2))
                 .genres(new HashSet<>())
                 .build();
+        filmTwo.getGenres().add(genre);
 
         userDbStorage.addUser(user1);
         userDbStorage.addUser(user2);
@@ -81,15 +87,15 @@ public class LikeDbStorageTest {
     @Test
     void testAddLike() {
         likeDbStorage.addLike(1L, 1L);
-        List<Long> likeFilm1 = filmDbStorage.findTop(10);
+        List<Film> likeFilm1 = filmDbStorage.findTop(10);
         likeDbStorage.addLike(1L, 2L);
         likeDbStorage.addLike(2L, 2L);
-        List<Long> likeFilm12 = filmDbStorage.findTop(5);
+        List<Film> likeFilm12 = filmDbStorage.findTop(5);
         likeDbStorage.deleteLike(2L, 2L);
-        List<Long> likeFilmAfterDelete = filmDbStorage.findTop(5);
-        assertThat(likeFilm1.get(0)).isEqualTo(1);
-        assertThat(likeFilm12.get(0)).isEqualTo(1);
-        assertThat(likeFilm12.get(1)).isEqualTo(2);
-        assertThat(likeFilmAfterDelete.get(0)).isEqualTo(1);
+        List<Film> likeFilmAfterDelete = filmDbStorage.findTop(5);
+        assertThat(likeFilm1.get(0)).isEqualTo(filmFirst);
+        assertThat(likeFilm12.get(0)).isEqualTo(filmFirst);
+        assertThat(likeFilm12.get(1)).isEqualTo(filmTwo);
+        assertThat(likeFilmAfterDelete.get(0)).isEqualTo(filmFirst);
     }
 }
