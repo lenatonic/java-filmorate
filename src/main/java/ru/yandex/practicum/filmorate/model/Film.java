@@ -30,4 +30,8 @@ public class Film {
     private LocalDate releaseDate;
 
     private Set<Long> likes;
+
+    private Mpa mpa;
+
+    private Set<Genre> genres;
 }

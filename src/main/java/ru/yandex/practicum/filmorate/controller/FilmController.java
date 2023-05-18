@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
@@ -11,29 +11,25 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequiredArgsConstructor
 public class FilmController {
     private final FilmService filmService;
+
+    @Autowired
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
+    }
 
     @PostMapping(value = "/films")
     public Film addFilm(@Valid @RequestBody Film film) {
         Film request = filmService.addFilm(film);
         log.debug("Добавлен новый фильм: " + film.getName());
-        return film;
+        return request;
     }
 
     @PutMapping(value = "/films")
     public Film updateFilm(@Valid @RequestBody Film film) {
         Film request = filmService.updateFilm(film);
         log.debug("Внесены изменения фильма: " + film.getName());
-        return film;
-    }
-
-    @PutMapping(value = "/films/{id}/like/{userId}")
-    public Film addLike(@PathVariable("id") Long id,
-                        @PathVariable("userId") Long userId) {
-        Film request = filmService.addLike(id, userId);
-        log.debug("Ставим like фильму ");
         return request;
     }
 
@@ -48,6 +44,14 @@ public class FilmController {
     public Film findFilm(@PathVariable("id") Long id) {
         Film request = filmService.findFilm(id);
         log.debug("Находим фильм по id: " + id);
+        return request;
+    }
+
+    @PutMapping(value = "/films/{id}/like/{userId}")
+    public Film addLike(@PathVariable("id") Long id,
+                        @PathVariable("userId") Long userId) {
+        Film request = filmService.addLike(id, userId);
+        log.debug("Ставим like фильму ");
         return request;
     }
 
